@@ -2,91 +2,94 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <title>Ro-Scale Signaling System</title>
+  <title>Ro-Scale Dispatch Request</title>
   <style>
     body {
       font-family: Arial;
-      text-align: center;
       background: #f2f2f2;
-      padding: 30px;
+      text-align: center;
+      padding: 40px;
     }
 
-    h1 {
-      color: #222;
-    }
-
-    .signal {
-      font-size: 30px;
-      margin: 20px;
-      padding: 20px;
+    .box {
+      background: white;
+      padding: 25px;
       border-radius: 15px;
-      display: inline-block;
-      width: 200px;
+      max-width: 450px;
+      margin: auto;
+      box-shadow: 0 0 10px gray;
     }
 
-    .green { background: lightgreen; }
-    .yellow { background: gold; }
-    .red { background: tomato; }
+    input, button {
+      padding: 10px;
+      margin: 8px;
+      width: 90%;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid gray;
+    }
 
     button {
-      font-size: 18px;
-      padding: 10px 20px;
-      margin: 10px;
-      border: none;
-      border-radius: 10px;
       cursor: pointer;
+      font-weight: bold;
     }
 
     button:hover {
-      opacity: 0.8;
+      opacity: 0.85;
     }
   </style>
 </head>
-
 <body>
 
-<h1>🚦 Ro-Scale Netherlands Dispatch Panel</h1>
-<p>Shift Leader bedient het sein — Driver volgt instructies.</p>
+<div class="box">
+  <h1>🚦 Ro-Scale Departure Request</h1>
+  <p>Driver stuurt verzoek naar Shift Leader via Discord.</p>
 
-<h2>Sein Status:</h2>
+  <input id="driver" placeholder="Driver naam">
+  <input id="train" placeholder="Treinnummer">
+  <input id="station" placeholder="Station (bijv. Alkmaar)">
 
-<div id="signalBox" class="signal red">
-  🔴 STOP
+  <button onclick="sendRequest()">📨 Verzoek sturen</button>
+
+  <p id="status"></p>
 </div>
 
-<br>
-
-<h2>Shift Leader Controls</h2>
-
-<button onclick="setSignal('green')">🟢 Groen</button>
-<button onclick="setSignal('yellow')">🟡 Geel</button>
-<button onclick="setSignal('red')">🔴 Rood</button>
-
-<h2>Driver Bericht</h2>
-<p id="driverMessage">Wacht op instructies...</p>
-
 <script>
-  function setSignal(color) {
-    let box = document.getElementById("signalBox");
-    let msg = document.getElementById("driverMessage");
+  // 🔥 PLAK HIER JE DISCORD WEBHOOK URL
+  const webhookURL = "https://discord.com/api/webhooks/1469976149584248893/OHiwc4WWwn2s9QKnbCaNs5Fm2Tk04EMsXEzWJX27QhznlIO3ymNkZpVrOZ1CAd8v4Vwg";
 
-    if (color === "green") {
-      box.className = "signal green";
-      box.innerHTML = "🟢 RIJDEN";
-      msg.innerHTML = "Vertrek toegestaan. Sein is groen.";
+  function sendRequest() {
+    let driver = document.getElementById("driver").value;
+    let train = document.getElementById("train").value;
+    let station = document.getElementById("station").value;
+
+    if (!driver || !train || !station) {
+      alert("Vul alles in!");
+      return;
     }
 
-    if (color === "yellow") {
-      box.className = "signal yellow";
-      box.innerHTML = "🟡 VOORZICHTIG";
-      msg.innerHTML = "Rij voorzichtig. Volgende sein mogelijk rood.";
-    }
+    let message = {
+      content:
+        "🚆 **Departure Request**\n\n" +
+        "👤 Driver: **" + driver + "**\n" +
+        "🚄 Trein: **" + train + "**\n" +
+        "📍 Station: **" + station + "**\n\n" +
+        "Shift Leader, geef sein groen of rood."
+    };
 
-    if (color === "red") {
-      box.className = "signal red";
-      box.innerHTML = "🔴 STOP";
-      msg.innerHTML = "Stop onmiddellijk en neem contact op met Shift Leader.";
-    }
+    fetch(webhookURL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(message)
+    })
+    .then(() => {
+      document.getElementById("status").innerHTML =
+        "✅ Verzoek verstuurd naar Shift Leader!";
+    })
+    .catch(() => {
+      document.getElementById("status").innerHTML =
+        "❌ Fout: webhook werkt niet.";
+    });
   }
 </script>
 
