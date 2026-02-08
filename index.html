@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Ro-Scale Signaling System</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #f2f2f2;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #222;
+    }
+
+    .signal {
+      font-size: 30px;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      display: inline-block;
+      width: 200px;
+    }
+
+    .green { background: lightgreen; }
+    .yellow { background: gold; }
+    .red { background: tomato; }
+
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🚦 Ro-Scale Netherlands Dispatch Panel</h1>
+<p>Shift Leader bedient het sein — Driver volgt instructies.</p>
+
+<h2>Sein Status:</h2>
+
+<div id="signalBox" class="signal red">
+  🔴 STOP
+</div>
+
+<br>
+
+<h2>Shift Leader Controls</h2>
+
+<button onclick="setSignal('green')">🟢 Groen</button>
+<button onclick="setSignal('yellow')">🟡 Geel</button>
+<button onclick="setSignal('red')">🔴 Rood</button>
+
+<h2>Driver Bericht</h2>
+<p id="driverMessage">Wacht op instructies...</p>
+
+<script>
+  function setSignal(color) {
+    let box = document.getElementById("signalBox");
+    let msg = document.getElementById("driverMessage");
+
+    if (color === "green") {
+      box.className = "signal green";
+      box.innerHTML = "🟢 RIJDEN";
+      msg.innerHTML = "Vertrek toegestaan. Sein is groen.";
+    }
+
+    if (color === "yellow") {
+      box.className = "signal yellow";
+      box.innerHTML = "🟡 VOORZICHTIG";
+      msg.innerHTML = "Rij voorzichtig. Volgende sein mogelijk rood.";
+    }
+
+    if (color === "red") {
+      box.className = "signal red";
+      box.innerHTML = "🔴 STOP";
+      msg.innerHTML = "Stop onmiddellijk en neem contact op met Shift Leader.";
+    }
+  }
+</script>
+
+</body>
+</html>
